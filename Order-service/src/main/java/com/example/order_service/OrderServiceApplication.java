@@ -11,7 +11,7 @@ public class OrderServiceApplication {
 	public static void main(String[] args) {
 
 		SpringApplication app=new SpringApplication(OrderServiceApplication.class);
-		app.setDefaultProperties(Map.of("server.port", "3001"));
+		app.setDefaultProperties(Map.of("server.port", "0"));
 		app.run(args);
 	}
 

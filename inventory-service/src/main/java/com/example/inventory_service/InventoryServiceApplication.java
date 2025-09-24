@@ -10,11 +10,12 @@ import org.springframework.context.annotation.Bean;
 import java.util.Map;
 
 @SpringBootApplication
+
 public class InventoryServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication app=new SpringApplication(InventoryServiceApplication.class);
-		app.setDefaultProperties(Map.of("server.port", "3002"));
+		app.setDefaultProperties(Map.of("server.port", "0"));
 		app.run(args);
 	}
 
@@ -22,11 +23,11 @@ public class InventoryServiceApplication {
 	public CommandLineRunner loadData(InventoryRepository inventoryRepository){
 		return args -> {
 			Inventory inventory=new Inventory();
-			inventory.setSkucode("Iphone-17");
+			inventory.setSkucode("Iphone_17");
 			inventory.setQuantity(123);
 
 			Inventory inventory1=new Inventory();
-			inventory1.setSkucode("Laptop");
+			inventory1.setSkucode("Iphone_17_red");
 			inventory1.setQuantity(234);
 
 			inventoryRepository.save(inventory);
