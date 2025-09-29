@@ -19,6 +19,7 @@
         <module>Order-service</module>
         <module>discovery-server</module>
         <module>api-gateway</module>
+        <module>nortification-service</module>
     </modules>
 
     <properties>

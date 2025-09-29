@@ -4,8 +4,10 @@ import com.example.order_service.Repository.OrderRepository;
 import com.example.order_service.dto.InventoryResponse;
 import com.example.order_service.dto.OrderLineItemsdto;
 import com.example.order_service.dto.OrderRequest;
+import com.example.order_service.event.OrderPlacedEvent;
 import com.example.order_service.model.Order;
 import com.example.order_service.model.OrderLineItems;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -17,12 +19,14 @@ import java.util.UUID;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
-    public OrderService(OrderRepository orderRepository, WebClient.Builder webClientBuilder) {
+    private final KafkaTemplate<String,OrderPlacedEvent> kafkaTemplate;
+    public OrderService(OrderRepository orderRepository, WebClient.Builder webClientBuilder, KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate) {
         this.orderRepository = orderRepository;
         this.webClientBuilder = webClientBuilder;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void placeOrder(OrderRequest orderRequest){
+    public String placeOrder(OrderRequest orderRequest){
         Order order=new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
         List<OrderLineItems> orderLineItems=orderRequest
@@ -46,6 +50,8 @@ public class OrderService {
        Boolean instock= Arrays.stream(InventoryArray).allMatch(InventoryResponse::inStock);
        if(instock){
            orderRepository.save(order);
+           kafkaTemplate.send("nortificationTopic",new OrderPlacedEvent(order.getOrderNumber()));
+           return "Order Placed Successfully";
 
        }
        else{
